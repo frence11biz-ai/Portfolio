@@ -822,6 +822,101 @@
     white-space: nowrap;
   }
 
+  /* ─── PHOTO FRAME ─── */
+  .photo-frame-wrap {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .photo-ring {
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent), var(--accent2), var(--accent));
+    animation: spin 6s linear infinite;
+    z-index: 0;
+  }
+
+  .photo-ring-mask {
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--bg);
+    z-index: 1;
+  }
+
+  .photo-frame {
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 2;
+    background: var(--bg3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: filter 0.3s;
+  }
+
+  .photo-frame:hover { filter: brightness(1.1); }
+
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+
+  .photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .photo-placeholder-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .photo-placeholder-txt {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .photo-upload-input {
+    display: none;
+  }
+
+  .photo-upload-hint {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-align: center;
+    margin-bottom: 0.75rem;
+    opacity: 0.8;
+    cursor: pointer;
+  }
+
+  .photo-upload-hint:hover { opacity: 1; text-decoration: underline; }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
   /* ─── ANIMATIONS ─── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
@@ -878,7 +973,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo"><span>F-I-L-E</span>.EXE</div>
+  <div class="nav-logo">F.<span>IAN</span>.EXE</div>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#experience">Experience</a></li>
@@ -913,7 +1008,16 @@
 
   <div class="status-badge">
     <div class="status-inner">
-      <div class="status-dot"></div>
+
+      <!-- Professional Photo -->
+      <div class="photo-frame-wrap">
+        <div class="photo-ring"></div>
+        <div class="photo-ring-mask"></div>
+        <div class="photo-frame">
+          <img src="assets/frence.png" alt="Frence Ian L. Esparcia" style="display:block;" />
+        </div>
+      </div>
+      <div class="status-dot" style="margin-top:0.5rem;"></div>
       <div class="status-label">Current Position</div>
       <div class="status-value">IT Staff · Permanent</div>
       <div class="status-org">Prov't of Mis. Oriental</div>
@@ -1056,12 +1160,12 @@
       <div class="skill-group-title">Administrative</div>
       <div class="skill-bars">
         <div class="skill-item">
-          <div class="skill-label">Claims  <span>Proficient</span></div>
-          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="82"></div></div>
+          <div class="skill-label">PhilHealth Claims <span>Expert</span></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="92"></div></div>
         </div>
         <div class="skill-item">
-          <div class="skill-label">Data Entry & Management <span>Expert</span></div>
-          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="92"></div></div>
+          <div class="skill-label">Memorandum & Policy Writing <span>Proficient</span></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="80"></div></div>
         </div>
         <div class="skill-item">
           <div class="skill-label">Social Media Management <span>Proficient</span></div>
@@ -1127,7 +1231,7 @@
       <div class="section-label">Get in Touch</div>
       <h2 class="contact-headline">Let's <em>connect</em> and collaborate.</h2>
       <p class="contact-sub">
-        Open to Professional opportunities within the government and private sectors.
+        Open to IT consultations, project collaborations, or professional opportunities within the government and private sectors.
       </p>
     </div>
 
@@ -1161,7 +1265,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-text">© 2026 Frence Ian L. Esparcia · All Rights Reserved</div>
+  <div class="footer-text">© 2025 Frence Ian L. Esparcia · All Rights Reserved</div>
   <div class="footer-made">Built with <span>♥</span> · Cagayan de Oro City</div>
 </footer>
 
@@ -1212,7 +1316,30 @@
 
   reveals.forEach(el => observer.observe(el));
 
-  // Skill bars animation
+  // Photo upload
+  const photoInput = document.getElementById('photoInput');
+  const photoImg = document.getElementById('photoImg');
+  const photoPlaceholder = document.getElementById('photoPlaceholder');
+  const photoFrame = document.getElementById('photoFrame');
+
+  photoFrame.addEventListener('click', () => photoInput.click());
+  document.querySelector('.photo-upload-hint').addEventListener('click', (e) => {
+    e.stopPropagation();
+    photoInput.click();
+  });
+
+  photoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      photoImg.src = ev.target.result;
+      photoImg.style.display = 'block';
+      photoPlaceholder.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
   const barObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
