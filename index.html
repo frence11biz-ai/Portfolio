@@ -964,6 +964,91 @@
     .interests-grid { grid-template-columns: repeat(2, 1fr); }
     .duties-grid { grid-template-columns: 1fr; }
   }
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block !important;
+  transition: transform 0.4s ease;
+}
+
+.photo-frame:hover .profile-photo {
+  transform: scale(1.08);
+}
+
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 3;
+}
+
+.photo-overlay span {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+.photo-frame:hover .photo-overlay {
+  opacity: 1;
+}
+
+/* FULLSCREEN MODAL */
+.photo-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.35s ease;
+}
+
+.photo-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-photo {
+  max-width: 88%;
+  max-height: 88%;
+  border-radius: 18px;
+  border: 1px solid rgba(0,210,255,0.25);
+  box-shadow: 0 0 40px rgba(0,210,255,0.15);
+  transform: scale(0.9);
+  transition: transform 0.35s ease;
+}
+
+.photo-modal.active .modal-photo {
+  transform: scale(1);
+}
+
+.close-photo {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  color: white;
+  font-size: 3rem;
+  cursor: pointer;
+  font-weight: 300;
+  transition: color 0.3s;
+}
+
+.close-photo:hover {
+  color: var(--accent);
+}
+  
 </style>
 </head>
 <body>
@@ -1010,13 +1095,35 @@
     <div class="status-inner">
 
       <!-- Professional Photo -->
-      <div class="photo-frame-wrap">
-        <div class="photo-ring"></div>
-        <div class="photo-ring-mask"></div>
-        <div class="photo-frame">
-          <img src="assets/frence.png" alt="Frence Ian L. Esparcia" style="display:block;" />
-        </div>
-      </div>
+<div class="photo-frame-wrap">
+  <div class="photo-ring"></div>
+  <div class="photo-ring-mask"></div>
+
+  <div class="photo-frame" id="photoFrame">
+    <img 
+      src="assets/frence.png" 
+      alt="Frence Ian L. Esparcia"
+      id="profilePhoto"
+      class="profile-photo"
+    />
+
+    <div class="photo-overlay">
+      <span>VIEW</span>
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen Modal -->
+<div class="photo-modal" id="photoModal">
+  <span class="close-photo" id="closePhoto">&times;</span>
+
+  <img 
+    src="assets/frence.png"
+    alt="Full Photo"
+    class="modal-photo"
+    id="modalPhoto"
+  />
+</div>
       <div class="status-dot" style="margin-top:0.5rem;"></div>
       <div class="status-label">Current Position</div>
       <div class="status-value">IT Staff · Permanent</div>
@@ -1353,6 +1460,32 @@
   }, { threshold: 0.3 });
 
   document.querySelectorAll('.skill-group').forEach(g => barObserver.observe(g));
+
+  // Photo Viewer
+const photoFrame = document.getElementById('photoFrame');
+const photoModal = document.getElementById('photoModal');
+const closePhoto = document.getElementById('closePhoto');
+
+photoFrame.addEventListener('click', () => {
+  photoModal.classList.add('active');
+});
+
+closePhoto.addEventListener('click', () => {
+  photoModal.classList.remove('active');
+});
+
+photoModal.addEventListener('click', (e) => {
+  if (e.target === photoModal) {
+    photoModal.classList.remove('active');
+  }
+});
+
+// ESC key closes modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    photoModal.classList.remove('active');
+  }
+});
 </script>
 
 </body>
